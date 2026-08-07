@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tareas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #F4EFFB;
+    --card: #FFFFFF;
+    --ink: #2E2148;
+    --ink-soft: #8577A3;
+    --line: #E4D9F5;
+    --purple-deep: #4B2E83;
+    --purple: #7B4FB5;
+    --purple-mid: #9B6FD1;
+    --purple-pale: #EFE6FA;
+    --alta: #D14B45;
+    --alta-bg: #FBE9E7;
+    --media: #DB7A2C;
+    --media-bg: #FBEADC;
+    --baja: #3E8B5F;
+    --baja-bg: #E5F2E9;
+    --focus: #6B3FA0;
+  }
+
+  *{ box-sizing: border-box; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(1100px 480px at 12% -8%, #E4D3FA 0%, transparent 58%),
+      radial-gradient(900px 420px at 95% 10%, #DCC7F5 0%, transparent 55%),
+      var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    display:flex;
+    justify-content:center;
+    padding: 56px 20px;
+  }
+
+  .app{
+    width:100%;
+    max-width: 620px;
+  }
+
+  header{
+    margin-bottom: 32px;
+  }
+
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--purple);
+    font-weight: 500;
+    margin: 0 0 6px 0;
+  }
+
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size: 40px;
+    margin: 0 0 6px 0;
+    letter-spacing: -0.01em;
+    background: linear-gradient(100deg, var(--purple-deep) 0%, var(--purple) 65%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: inline-block;
+  }
+
+  .subtitle{
+    color: var(--ink-soft);
+    font-size: 15px;
+    margin:0;
+  }
+
+  .composer{
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: 0 4px 18px rgba(75, 46, 131, 0.08);
+    margin-bottom: 28px;
+  }
+
+  .composer-row{
+    display:flex;
+    gap:10px;
+  }
+
+  #taskInput{
+    flex:1;
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-family:'Inter', sans-serif;
+    font-size: 15px;
+    color: var(--ink);
+    background: var(--purple-pale);
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    min-width: 0;
+  }
+
+  #taskInput::placeholder{ color: #A697C4; }
+
+  #taskInput:focus{
+    border-color: var(--focus);
+    box-shadow: 0 0 0 3px rgba(107, 63, 160, 0.14);
+  }
+
+  .priority-select{
+    position: relative;
+  }
+
+  select#prioritySelect{
+    appearance: none;
+    -webkit-appearance: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 34px 12px 14px;
+    background: var(--purple-pale);
+    color: var(--ink);
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  select#prioritySelect:focus{
+    border-color: var(--focus);
+    box-shadow: 0 0 0 3px rgba(107, 63, 160, 0.14);
+  }
+
+  .priority-select::after{
+    content: "";
+    position:absolute;
+    right: 13px;
+    top: 50%;
+    width: 7px;
+    height: 7px;
+    border-right: 1.5px solid var(--purple);
+    border-bottom: 1.5px solid var(--purple);
+    transform: translateY(-70%) rotate(45deg);
+    pointer-events:none;
+  }
+
+  .add-btn{
+    background: linear-gradient(135deg, var(--purple-deep) 0%, var(--purple) 100%);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-family:'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(75, 46, 131, 0.25);
+    transition: transform 0.1s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .add-btn:hover{ opacity: 0.92; box-shadow: 0 4px 14px rgba(75, 46, 131, 0.32); }
+  .add-btn:active{ transform: scale(0.97); }
+
+  .tabs{
+    display:flex;
+    gap: 6px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .tab-btn{
+    display:flex;
+    align-items:center;
+    gap: 7px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    padding: 8px 13px;
+    border-radius: 999px;
+    border: 1.5px solid var(--line);
+    background: var(--card);
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .tab-btn:hover{
+    border-color: var(--purple-mid);
+    color: var(--ink);
+  }
+
+  .tab-btn .dot{
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--ink-soft);
+  }
+
+  .tab-btn[data-tab="todo"] .dot{
+    background: linear-gradient(135deg, var(--alta) 0%, var(--media) 50%, var(--baja) 100%);
+  }
+  .tab-btn[data-tab="alta"] .dot{ background: var(--alta); }
+  .tab-btn[data-tab="media"] .dot{ background: var(--media); }
+  .tab-btn[data-tab="baja"] .dot{ background: var(--baja); }
+
+  .tab-btn .count{
+    color: var(--ink-soft);
+    font-weight: 400;
+  }
+
+  .tab-btn.active{
+    background: var(--ink);
+    border-color: var(--ink);
+    color: #FFFFFF;
+  }
+
+  .tab-btn.active .count{ color: rgba(255,255,255,0.7); }
+
+  .stats{
+    display:flex;
+    gap: 16px;
+    font-family:'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin: 18px 2px 14px 2px;
+    letter-spacing: 0.02em;
+  }
+
+  .stats strong{ color: var(--purple-deep); font-weight: 600; }
+
+  ul#taskList{
+    list-style:none;
+    margin:0;
+    padding:0;
+    display:flex;
+    flex-direction:column;
+    gap: 10px;
+  }
+
+  .task{
+    display:flex;
+    align-items:center;
+    gap: 12px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 13px 14px;
+    position: relative;
+    overflow:hidden;
+    box-shadow: 0 1px 6px rgba(75, 46, 131, 0.05);
+    animation: enter 0.22s ease;
+  }
+
+  @keyframes enter{
+    from{ opacity:0; transform: translateY(-4px); }
+    to{ opacity:1; transform: translateY(0); }
+  }
+
+  .task::before{
+    content:"";
+    position:absolute;
+    left:0; top:0; bottom:0;
+    width: 4px;
+  }
+
+  .task[data-priority="alta"]::before{ background: var(--alta); }
+  .task[data-priority="media"]::before{ background: var(--media); }
+  .task[data-priority="baja"]::before{ background: var(--baja); }
+
+  .check-btn{
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+    border-radius: 6px;
+    border: 1.5px solid var(--line);
+    background: var(--purple-pale);
+    cursor: pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:0;
+    margin-left: 4px;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+
+  .check-btn svg{
+    width: 12px; height: 12px;
+    opacity:0;
+    transition: opacity 0.12s ease;
+  }
+
+  .task.done .check-btn{
+    background: linear-gradient(135deg, var(--purple-deep) 0%, var(--purple) 100%);
+    border-color: var(--purple);
+  }
+  .task.done .check-btn svg{ opacity:1; }
+
+  .task-body{
+    flex:1;
+    min-width:0;
+  }
+
+  .task-text{
+    font-size: 15px;
+    color: var(--ink);
+    word-break: break-word;
+    line-height:1.4;
+  }
+
+  .task.done .task-text{
+    text-decoration: line-through;
+    color: var(--ink-soft);
+  }
+
+  .priority-tag{
+    display:inline-block;
+    margin-top: 4px;
+    font-family:'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    font-weight:500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 5px;
+  }
+
+  .task[data-priority="alta"] .priority-tag{ color: var(--alta); background: var(--alta-bg); }
+  .task[data-priority="media"] .priority-tag{ color: var(--media); background: var(--media-bg); }
+  .task[data-priority="baja"] .priority-tag{ color: var(--baja); background: var(--baja-bg); }
+
+  .task.done .priority-tag{ opacity: 0.55; }
+
+  .delete-btn{
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #B8B2A9;
+    padding: 6px;
+    border-radius: 6px;
+    display:flex;
+    transition: color 0.15s ease, background 0.15s ease;
+  }
+
+  .delete-btn:hover{ color: var(--purple-deep); background: var(--purple-pale); }
+
+  .empty-state{
+    text-align:center;
+    padding: 44px 20px;
+    color: var(--ink-soft);
+    border: 1.5px dashed var(--purple-mid);
+    border-radius: 12px;
+    font-size: 14px;
+    background: var(--purple-pale);
+  }
+
+  .empty-state .eyebrow{ margin-bottom: 4px; }
+
+  @media (max-width: 480px){
+    h1{ font-size: 32px; }
+    .composer-row{ flex-wrap: wrap; }
+    select#prioritySelect{ order: 2; flex:1; }
+    #taskInput{ order:1; flex-basis: 100%; }
+    .add-btn{ order:3; flex:1; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .task{ animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header>
+    <p class="eyebrow">Lista de tareas</p>
+    <h1>Pendientes</h1>
+    <p class="subtitle">Escribe una tarea, elige su prioridad y agrégala a la lista.</p>
+  </header>
+
+  <div class="composer">
+    <div class="composer-row">
+      <input type="text" id="taskInput" placeholder="¿Qué hay que hacer?" maxlength="140">
+      <div class="priority-select">
+        <select id="prioritySelect">
+          <option value="alta">Alta</option>
+          <option value="media" selected>Media</option>
+          <option value="baja">Baja</option>
+        </select>
+      </div>
+      <button class="add-btn" id="addBtn">Agregar</button>
+    </div>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <button class="tab-btn active" data-tab="todo"><span class="dot"></span>Todo <span class="count" id="count-todo"></span></button>
+    <button class="tab-btn" data-tab="alta"><span class="dot"></span>Altas <span class="count" id="count-alta"></span></button>
+    <button class="tab-btn" data-tab="media"><span class="dot"></span>Medias <span class="count" id="count-media"></span></button>
+    <button class="tab-btn" data-tab="baja"><span class="dot"></span>Bajas <span class="count" id="count-baja"></span></button>
+  </div>
+
+  <div class="stats" id="stats"></div>
+
+  <ul id="taskList"></ul>
+</div>
+
+<script>
+  const taskInput = document.getElementById('taskInput');
+  const prioritySelect = document.getElementById('prioritySelect');
+  const addBtn = document.getElementById('addBtn');
+  const taskList = document.getElementById('taskList');
+  const stats = document.getElementById('stats');
+  const tabs = document.getElementById('tabs');
+
+  let tasks = [];
+  let nextId = 1;
+  let activeTab = 'todo';
+
+  const priorityLabels = { alta: 'Alta', media: 'Media', baja: 'Baja' };
+  const priorityOrder = { alta: 0, media: 1, baja: 2 };
+
+  function addTask(){
+    const text = taskInput.value.trim();
+    if(!text) {
+      taskInput.focus();
+      return;
+    }
+    tasks.push({
+      id: nextId++,
+      text: text,
+      priority: prioritySelect.value,
+      done: false
+    });
+    taskInput.value = '';
+    taskInput.focus();
+    render();
+  }
+
+  function toggleTask(id){
+    const t = tasks.find(t => t.id === id);
+    if(t) t.done = !t.done;
+    render();
+  }
+
+  function deleteTask(id){
+    tasks = tasks.filter(t => t.id !== id);
+    render();
+  }
+
+  function getVisibleTasks(){
+    if(activeTab === 'todo'){
+      return [...tasks].sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+    }
+    return tasks.filter(t => t.priority === activeTab);
+  }
+
+  function render(){
+    taskList.innerHTML = '';
+    const visible = getVisibleTasks();
+
+    if(visible.length === 0){
+      const empty = document.createElement('li');
+      const messages = {
+        todo: 'Aún no hay tareas. Agrega la primera arriba.',
+        alta: 'No hay tareas de prioridad alta.',
+        media: 'No hay tareas de prioridad media.',
+        baja: 'No hay tareas de prioridad baja.'
+      };
+      empty.innerHTML = `
+        <div class="empty-state">
+          <p class="eyebrow" style="margin-bottom:4px;">Todo despejado</p>
+          ${messages[activeTab]}
+        </div>`;
+      taskList.appendChild(empty);
+    } else {
+      visible.forEach(t => {
+        const li = document.createElement('li');
+        li.className = 'task' + (t.done ? ' done' : '');
+        li.setAttribute('data-priority', t.priority);
+        li.innerHTML = `
+          <button class="check-btn" aria-label="Marcar como completada" data-id="${t.id}" data-action="toggle">
+            <svg viewBox="0 0 16 16" fill="none">
+              <path d="M3 8.5L6.2 12L13 4" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <div class="task-body">
+            <div class="task-text"></div>
+            <span class="priority-tag">${priorityLabels[t.priority]}</span>
+          </div>
+          <button class="delete-btn" aria-label="Eliminar tarea" data-id="${t.id}" data-action="delete">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M3 4H13M6.5 4V2.5C6.5 2.22386 6.72386 2 7 2H9C9.27614 2 9.5 2.22386 9.5 2.5V4M11.5 4V13C11.5 13.2761 11.2761 13.5 11 13.5H5C4.72386 13.5 4.5 13.2761 4.5 13V4H11.5Z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        `;
+        li.querySelector('.task-text').textContent = t.text;
+        taskList.appendChild(li);
+      });
+    }
+
+    const pending = tasks.filter(t => !t.done).length;
+    const done = tasks.filter(t => t.done).length;
+    stats.innerHTML = `<span><strong>${pending}</strong> pendiente${pending === 1 ? '' : 's'}</span><span><strong>${done}</strong> completada${done === 1 ? '' : 's'}</span>`;
+
+    document.getElementById('count-todo').textContent = tasks.length;
+    document.getElementById('count-alta').textContent = tasks.filter(t => t.priority === 'alta').length;
+    document.getElementById('count-media').textContent = tasks.filter(t => t.priority === 'media').length;
+    document.getElementById('count-baja').textContent = tasks.filter(t => t.priority === 'baja').length;
+  }
+
+  addBtn.addEventListener('click', addTask);
+  taskInput.addEventListener('keydown', e => {
+    if(e.key === 'Enter') addTask();
+  });
+
+  tabs.addEventListener('click', e => {
+    const btn = e.target.closest('.tab-btn');
+    if(!btn) return;
+    activeTab = btn.getAttribute('data-tab');
+    tabs.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b === btn));
+    render();
+  });
+
+  taskList.addEventListener('click', e => {
+    const btn = e.target.closest('button[data-action]');
+    if(!btn) return;
+    const id = Number(btn.getAttribute('data-id'));
+    if(btn.dataset.action === 'toggle') toggleTask(id);
+    if(btn.dataset.action === 'delete') deleteTask(id);
+  });
+
+  render();
+</script>
+
+</body>
+</html>
